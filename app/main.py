@@ -19,6 +19,8 @@ app = FastAPI(
     lifespan=ciclo_de_vida,
 )
 
+app.include_router(usuarios.router)
+
 @app.get("/", tags=["Status"], summary="verificar se a api esta no ar")
 def raiz() -> dict[str, str]:
     return{"mensagem": "todo-list online", "docutação": "/docs"}
