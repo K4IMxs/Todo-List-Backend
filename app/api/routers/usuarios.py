@@ -19,6 +19,7 @@ router = APIRouter(prefix="/usuarios", tags=["Usuários"])
     response_model=UsuarioOut,
     status_code=status.HTTP_201_CREATED,
     summary="Cadastrar usuário",
+    responses={409: {"description": "E-mail ja cadastrado."}},
 )
 def cadastrar_usuario(
     dados: UsuarioCreate,

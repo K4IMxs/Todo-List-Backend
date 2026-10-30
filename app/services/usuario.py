@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from app.core.exceptions import EmailJaCadastrado
 from app.core.security import HashDeSenha
 from app.models import Usuario
 from app.repositories import UsuarioRepositorio
@@ -15,6 +16,10 @@ class UsuarioServico:
 
     def cadastrar(self, nome: str, email: str, senha: str) -> Usuario:
         """Cadastra um usuário com a senha protegida por hash."""
+
+        if self._repositorio.email_existe(email):
+            raise EmailJaCadastrado
+
         usuario = Usuario(nome=nome, email=email)
         usuario.definir_senha(senha, self._hasher)  # RN-05
         return self._repositorio.salvar(usuario)

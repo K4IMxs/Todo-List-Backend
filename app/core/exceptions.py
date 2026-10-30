@@ -15,6 +15,14 @@ class ErroDeDominio(Exception):
         self.mensagem = mensagem or type(self).mensagem
         super().__init__(self.mensagem)
 
+class RecursoNaoEncontrado(ErroDeDominio):
+    """Pediram um registro que não existe."""
+
+    mensagem = "Recurso não encontrado."
+
+class UsuarioNaoEncontrado(RecursoNaoEncontrado):
+    mensagem = "Usuário não encontrado."
+
 class RegraDeNegocioViolada(ErroDeDominio):
     """A operação é compreensível, mas contraria uma regra do negócio."""
 
@@ -24,3 +32,8 @@ class ValorInvalido(RegraDeNegocioViolada):
     """Valor fora do conjunto aceito por um campo do domínio."""
 
     mensagem = "Valor inválido para o campo."
+
+class EmailJaCadastrado(ErroDeDominio):
+    """RN-01: Um mesmo e-mail não pode ser usado mais de uma vez."""
+
+    mensagem = "Ja existe uma conta com este e-mail."
