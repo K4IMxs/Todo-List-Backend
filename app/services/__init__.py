@@ -9,5 +9,6 @@ mesmo serviço funcionaria em um programa de terminal.
 from app.services.usuario import UsuarioServico
 
 __all__ = [
+    "Sessao",
     "UsuarioServico",
 ]

@@ -6,14 +6,15 @@ from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from fastapi.exceptions import RequestValidationError
 from app.api.routers import usuarios
+from app.core.config import obter_configuracao
 from app.core.exceptions import (
     EmailJaCadastrado,
     ErroDeDominio,
     RecursoNaoEncontrado,
     RegraDeNegocioViolada,
+    NaoAutentiado,
 )
 from app.db.database import criar_tabelas
-
 # Cada família de erro de domínio corresponde a um código HTTP. A ordem
 # importa: vale o primeiro tipo que casar, do mais específico ao mais geral.
 STATUS_POR_ERRO: tuple[tuple[type[ErroDeDominio], int], ...] = (
@@ -21,16 +22,20 @@ STATUS_POR_ERRO: tuple[tuple[type[ErroDeDominio], int], ...] = (
     (EmailJaCadastrado, 409),
     (RegraDeNegocioViolada, 422),
     (ErroDeDominio, 400),
+    (NaoAutentiado, 401),
 )
+
 @asynccontextmanager
 async def ciclo_de_vida(_app: FastAPI) -> AsyncIterator[None]:
     """Prepara o banco na subida da aplicação: cria as tabelas que faltam."""
+    obter_configuracao().segredo_jwt()
     criar_tabelas()
     yield
+
 app = FastAPI(
     title="Todo List API",
     description="Backend do Todo List - curso Desenvolvedor Full Stack (SENAC).",
-    version="0.3.0",
+    version="0.4.0",
     lifespan=ciclo_de_vida,
 )
 
@@ -39,10 +44,6 @@ async def tratar_erro_de_dominio(
     _request: Request, excecao: ErroDeDominio
 ) -> JSONResponse:
     """Converte qualquer erro de domínio na resposta HTTP correspondente.
-
-    Um único tratador atende a hierarquia inteira de exceções – é polimorfismo
-    aplicado ao tratamento de erro. As rotas não precisam conhecer códigos de
-    status de negócio e o domínio não precisa conhecer HTTP.
     """
     codigo = next(
         (codigo for tipo, codigo in STATUS_POR_ERRO if isinstance(excecao, tipo)), 400
