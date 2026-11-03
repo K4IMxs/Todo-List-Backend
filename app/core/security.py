@@ -30,11 +30,13 @@ class HashBcrypt(HashDeSenha):
 @dataclass(frozen=True)
 class TokenEmitido:
     """um token de acesso recém-criado e o momento em que deixa de valer"""
-    token: str
+    valor: str
     expira_em: datetime
 class TokenJWT:
-    """Emite e confere tokens JWT assinado com HS256"""
-    ALGORITIMO = "HS256"
+    """Emite e confere tokens JWT assinado com HS256
+    """
+
+    ALGORITMO = "HS256"
     def __init__(self, segredo: str, expira_minutos: int) -> None:
         self.segredo = segredo
         self.validade = timedelta(minutes=expira_minutos)
@@ -42,7 +44,7 @@ class TokenJWT:
         """Cria um token válido pelo tempo configurado"""
         expira_em = (agora or datetime.now(timezone.utc)) + self.validade
         conteudo = {"sub": str(usuario_id), "exp": expira_em}
-        valor = jwt.encode(conteudo, self.segredo, algorithm=self.ALGORITIMO)
+        valor = jwt.encode(conteudo, self.segredo, algorithm=self.ALGORITMO)
         return TokenEmitido(valor=valor, expira_em=expira_em)
     
     def ler(self, token: str) -> int:
@@ -54,7 +56,7 @@ class TokenJWT:
             conteudo = jwt.decode(
                 token, 
                 self.segredo, 
-                algorithms=[self.ALGORITIMO],
+                algorithms=[self.ALGORITMO],
                 options={"require": ["sub", "exp"]},
             )
             return int(conteudo["sub"])

@@ -27,15 +27,15 @@ class UsuarioServico:
         """Cadastra um usuário com a senha protegida por hash."""
 
         if self._repositorio.email_existe(email):
-            raise EmailJaCadastrado
+            raise EmailJaCadastrado()
         usuario = Usuario(nome=nome, email=email)
         usuario.definir_senha(senha, self._hasher)  # RN-05
         return self._repositorio.salvar(usuario)
-    def autenticar(self, email: str, senha: str) -> Sessao:
+    def autenticar(self, email: str, senha: str) -> Usuario:
         """Confere e-mail e senha e devolve o usuário com token de acesso."""
         usuario = self._repositorio.buscar_por_email(email)
         if usuario is None or not usuario.senha_confere(senha, self._hasher):
-            raise CredenciaisInvalidas
+            raise CredenciaisInvalidas()
         return usuario
     def entrar(self, email: str, senha: str) -> Sessao:
         """Autentica e emite o token de acesso."""

@@ -27,6 +27,7 @@ def obter_token() -> TokenJWT:
 def obter_usuario_servico(
     sessao: Session = Depends(obter_sessao),
     hasher: HashDeSenha = Depends(obter_hasher),
+    tokens: TokenJWT = Depends(obter_token)
 ) -> UsuarioServico:
     """Serviço de usuários, com repositório e hasher já injetados."""
-    return UsuarioServico(UsuarioRepositorio(sessao), hasher)
+    return UsuarioServico(UsuarioRepositorio(sessao), hasher, tokens)

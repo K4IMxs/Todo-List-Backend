@@ -38,7 +38,7 @@ def entrar(
     """Autentica e devolve o token de acesso."""
     sessao = servico.entrar(dados.email, dados.senha)
     return SessaoOut(
-        access_token=sessao.token.token,
+        access_token=sessao.token.valor,
         expira_em=sessao.token.expira_em,
         usuario=UsuarioOut.model_validate(sessao.usuario)
 )
