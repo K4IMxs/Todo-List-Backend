@@ -7,7 +7,7 @@ de negócio sobem com exceções de domínio e são convertido em código de sta
 
 from typing import Annotated
 from fastapi import APIRouter, Depends, status
-from app.api.dependencies import obter_usuario_servico
+from app.api.dependencies import UsuarioAtual, obter_usuario_servico
 from app.schemas import SessaoOut, UsuarioCreate, UsuarioLogin, UsuarioOut
 from app.services import UsuarioServico
 router = APIRouter(prefix="/usuarios", tags=["Usuários"])
@@ -42,3 +42,12 @@ def entrar(
         expira_em=sessao.token.expira_em,
         usuario=UsuarioOut.model_validate(sessao.usuario)
 )
+@router.get(
+    "/me",
+    response_model=UsuarioOut,
+    summary="Consultar o usuário logado",
+    responses={401: {"description": "Sem token, ou token invalido/expirado."}},
+)
+def quem_sou_eu(usuario: UsuarioAtual) -> UsuarioOut:
+    """Devolve os dados do usuário dono do token de acesso."""
+    return usuario
