@@ -3,6 +3,7 @@
 Cada entidade é responsável por manter o próprio estado válido: o `Usuario`
 normaliza o próprio e-mail e só aceita a senha em forma de hash.
 """
+from app.models.tarefa import Tarefa 
 from app.models.usuario import Usuario
 
-__all__ = ["Usuario"]
+__all__ = ["Tarefa", "Usuario"]

@@ -5,7 +5,7 @@ from typing import Any
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from fastapi.exceptions import RequestValidationError
-from app.api.routers import usuarios
+from app.api.routers import tasks, usuarios
 from app.core.config import obter_configuracao
 from app.core.exceptions import (
     EmailJaCadastrado,
@@ -35,7 +35,7 @@ async def ciclo_de_vida(_app: FastAPI) -> AsyncIterator[None]:
 app = FastAPI(
     title="Todo List API",
     description="Backend do Todo List - curso Desenvolvedor Full Stack (SENAC).",
-    version="0.5.0",
+    version="0.6.0",
     lifespan=ciclo_de_vida,
 )
 
@@ -92,6 +92,9 @@ async def tratar_erro_de_validacao(
         status_code=422,
         content={"detail": erros[0]["mensagem"] if erros else "Dados inválidos.", "erros": erros},
     )
+
+app.include_router(usuarios.router)
+app.include_router(tasks.router)
 
 app.include_router(usuarios.router)
 @app.get("/", tags=["Status"], summary="Verificar se a API está no ar")

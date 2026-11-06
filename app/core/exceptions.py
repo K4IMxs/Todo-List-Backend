@@ -8,21 +8,35 @@ class ErroDeDominio(Exception):
         self.mensagem = mensagem or type(self).mensagem
         super().__init__(self.mensagem)
 
+# ---------------------------------------------------------
+# Recurso inexistente | 404
+# ---------------------------------------------------------
+
 class RecursoNaoEncontrado(ErroDeDominio):
     """Pediram um registro que não existe."""
-
     mensagem = "Recurso não encontrado."
 
 class UsuarioNaoEncontrado(RecursoNaoEncontrado):
     mensagem = "Usuário não encontrado."
 
+# ---------------------------------------------------------
+# Regra de negócio violada | 422
+# ---------------------------------------------------------
+
 class RegraDeNegocioViolada(ErroDeDominio):
     """A operação é compreensível, mas contraria uma regra do negócio."""
     mensagem = "Operação recusada por uma regra de negócio."
 
+class TituloObrigatorio(RegraDeNegocioViolada):
+    mensagem = "O título da tarefa é obrigatório."
+
 class ValorInvalido(RegraDeNegocioViolada):
     """Valor fora do conjunto aceito por um campo do domínio."""
     mensagem = "Valor inválido para o campo."
+
+# ---------------------------------------------------------
+# Conflito e autenticação | 409 e 401
+# ---------------------------------------------------------
 
 class EmailJaCadastrado(ErroDeDominio):
     """RN-01: Um mesmo e-mail não pode ser usado mais de uma vez."""
@@ -35,6 +49,7 @@ class NaoAutentiado(ErroDeDominio):
 class CredenciaisInvalidas(NaoAutentiado):
     """E-mail ou senha não conferem."""
     mensagem = "E-mail ou senha inválidos."
+    
 class TokenInvalido(NaoAutentiado):
     """Token de acesso ausente, expirado, adulterado ou de usuário removido."""
     mensagem = "Sessão inválida. Entre na conta novamente para continuar."
