@@ -19,6 +19,9 @@ class RecursoNaoEncontrado(ErroDeDominio):
 class UsuarioNaoEncontrado(RecursoNaoEncontrado):
     mensagem = "Usuário não encontrado."
 
+class TarefaNaoEncontrada(RecursoNaoEncontrado):
+    mensagem = "Tarefa não encontrada."
+
 # ---------------------------------------------------------
 # Regra de negócio violada | 422
 # ---------------------------------------------------------
@@ -35,7 +38,7 @@ class ValorInvalido(RegraDeNegocioViolada):
     mensagem = "Valor inválido para o campo."
 
 # ---------------------------------------------------------
-# Conflito e autenticação | 409 e 401
+# Conflito e autenticação | 409, 401 e 403
 # ---------------------------------------------------------
 
 class EmailJaCadastrado(ErroDeDominio):
@@ -53,3 +56,7 @@ class CredenciaisInvalidas(NaoAutentiado):
 class TokenInvalido(NaoAutentiado):
     """Token de acesso ausente, expirado, adulterado ou de usuário removido."""
     mensagem = "Sessão inválida. Entre na conta novamente para continuar."
+
+class AcessoNaoAutorizado(ErroDeDominio):
+    """Tentativa de mexer em uma tarefa que pertence a outro usuário."""
+    mensagem = "Esta tarefa pertence a outro usuário."

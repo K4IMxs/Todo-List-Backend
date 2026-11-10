@@ -8,11 +8,12 @@ from fastapi.exceptions import RequestValidationError
 from app.api.routers import tasks, usuarios
 from app.core.config import obter_configuracao
 from app.core.exceptions import (
+    AcessoNaoAutorizado,
     EmailJaCadastrado,
     ErroDeDominio,
+    NaoAutentiado,
     RecursoNaoEncontrado,
     RegraDeNegocioViolada,
-    NaoAutentiado,
 )
 from app.db.database import criar_tabelas
 # Cada família de erro de domínio corresponde a um código HTTP. A ordem
@@ -21,6 +22,7 @@ STATUS_POR_ERRO: tuple[tuple[type[ErroDeDominio], int], ...] = (
     (RecursoNaoEncontrado, 404),
     (EmailJaCadastrado, 409),
     (NaoAutentiado, 401),
+    (AcessoNaoAutorizado, 403),
     (RegraDeNegocioViolada, 422),
     (ErroDeDominio, 401),
 )
@@ -31,11 +33,10 @@ async def ciclo_de_vida(_app: FastAPI) -> AsyncIterator[None]:
     obter_configuracao().segredo_jwt()
     criar_tabelas()
     yield
-
 app = FastAPI(
     title="Todo List API",
     description="Backend do Todo List - curso Desenvolvedor Full Stack (SENAC).",
-    version="0.7.0",
+    version="0.8.0",
     lifespan=ciclo_de_vida,
 )
 
