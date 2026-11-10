@@ -11,3 +11,17 @@ class TarefaRepositorio(RepositorioBase[Tarefa]):
     @property
     def modelo(self) -> type[Tarefa]:
         return Tarefa
+    
+    def listar(self, usuario_id: int) -> list[Tarefa]:
+        """Lista as tarefas de um usuario, das mais recentes para as mais antigas.
+
+        O filtro pelo dono vai na consulta - no WHERE' -, e nao num if depois
+        de buscar tudo: o banco devolve só o que é do usuário.
+        """
+        return (
+            self._sessao.query(Tarefa)
+            .filter(Tarefa.usuario_id == usuario_id)
+
+            .order_by(Tarefa.criado_em.desc(), Tarefa.id.desc())
+            .all()
+        )

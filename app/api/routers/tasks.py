@@ -5,7 +5,9 @@ mais `usuarioId` na URL nem no corpo: antes, bastava trocar esse numero para
 ler, alterar ou apagar a tarefa de outra pessoa.
 """
 from typing import Annotated
-from fastapi import APIRouter, Depends, status
+
+from fastapi import APIRouter, Depends, Response, status
+
 from app.api.dependencies import UsuarioAtual, obter_tarefa_servico
 from app.schemas import TarefaCreate, TarefaOut
 from app.services import TarefaServico
@@ -32,3 +34,14 @@ def criar_task(dados: TarefaCreate, usuario: UsuarioAtual, servico: Servico) -> 
         prioridade=dados.prioridade,
         prazo=dados.prazo
     )
+
+@router.get(
+    "",
+    response_model=list[TarefaOut],
+    summary="Listar tarefas do usuário logado"
+)
+def listar_tasks(usuario: UsuarioAtual, servico: Servico, response: Response) -> list[TarefaOut]:
+    """Lista as tarefas do usuário logado, das mais recentes para as mais antigas."""
+    tarefas = servico.listar(usuario_id=usuario.id)
+    response.headers["X-Total-Count"] = str(len(tarefas))
+    return tarefas

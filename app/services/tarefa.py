@@ -35,3 +35,7 @@ class TarefaServico:
             prazo=prazo,
         )
         return self._tarefas.salvar(tarefa)
+    
+    def listar(self, usuario_id: int) -> list[Tarefa]:
+        """Lista as tarefas do usuário autenticado."""
+        return self._tarefas.listar(usuario_id)
