@@ -8,12 +8,13 @@ from app.core.exceptions import AcessoNaoAutorizado, TarefaNaoEncontrada
 from app.models import Tarefa
 from app.models.enums import PrioridadeTarefa
 from app.repositories import TarefaRepositorio
-
+from app.models.enums import StatusTarefa
 NAO_INFORMADO: Any = object()
 @dataclass(frozen=True)
 class AlteracoesDaTarefa:
     """Campos que um PATCH pediu para alterar."""
     titulo: Any = NAO_INFORMADO
+    status: Any = NAO_INFORMADO
     prioridade: Any = NAO_INFORMADO
     prazo: Any = NAO_INFORMADO
     def informado(self, campo: str) -> bool:
@@ -62,6 +63,8 @@ class TarefaServico:
             tarefa.prioridade = alteracoes.prioridade
         if alteracoes.informado("prazo"):
             tarefa.prazo = alteracoes.prazo
+        if alteracoes.informado("status"):
+            tarefa.definir_status(StatusTarefa(alteracoes.status))
         return self._tarefas.salvar(tarefa)
     def remover(self, tarefa_id: int, usuario_id: int) -> None:
         """Remove a tarefa definitivamente."""
