@@ -58,7 +58,7 @@ class Tarefa(Base):
     @status.expression
     def status(cls):
         """Versão da propriedade usada dentro de consultas SQL."""
-        return cls._staus
+        return cls._status
 
     @property
     def concluido_em(self) -> datetime | None:
