@@ -31,7 +31,7 @@ class PrioridadeTarefa(str, Enum):
         Ordenar pelo texto daria "alta, baixa, media, urgente", que nao e a
         ordem que o usuario espera ver. 0 peso existe para isso.
         """
-        return _Pesos[self]
+        return _PESOS[self]
     @classmethod
     def mapa_de_pesos(cls) -> dict[str, int]:
         """Mapa `valor -> peso`, no formato que o `case()` do SQL consome."""
@@ -42,3 +42,23 @@ _PESOS = {
     PrioridadeTarefa.MEDIA: 2,
     PrioridadeTarefa.BAIXA: 3,
 }
+
+class  CampoOrdenacao(str, Enum):
+    """Campos pelos quais a listagem de tarefas pode ser ordenada.
+
+    Os valores repetem o nome publico do campo na API (camelCase), porque é
+    isso que o cliente envia em `?ordernarPor=`. Como é um enum, um valor fora
+    da lista passa a ser recusado com 422 - antes, o codigo caía
+    silenciosamente na ordenacão por data de criação e o cliente nunca sabia
+    que seu parâmetro havia sido ignorado.
+    """
+
+    CRIADO_EM = "criadoEm"
+    PRAZO = "prazo"
+    PRIORIDADE = "prioridade"
+
+class Ordem(str, Enum):
+    """Sentido de ordenação."""
+
+    ASC = "asc"
+    DESC = "desc"

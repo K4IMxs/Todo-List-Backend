@@ -5,6 +5,7 @@ from typing import Any
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from fastapi.exceptions import RequestValidationError
+from fastapi.middleware.cors import CORSMiddleware
 from app.api.routers import tasks, usuarios
 from app.core.config import obter_configuracao
 from app.core.exceptions import (
@@ -36,8 +37,16 @@ async def ciclo_de_vida(_app: FastAPI) -> AsyncIterator[None]:
 app = FastAPI(
     title="Todo List API",
     description="Backend do Todo List - curso Desenvolvedor Full Stack (SENAC).",
-    version="0.10.0",
+    version="0.11.0",
     lifespan=ciclo_de_vida,
+)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=list(obter_configuracao().origens_permitidas),
+    allow_credentials=False, # o token vai no cabeçalho, não em cookie
+    allow_methods=["*"],
+    allow_headers=["*"],
+    expose_headers=["X-Total-Count"],
 )
 
 @app.exception_handler(ErroDeDominio)

@@ -7,7 +7,7 @@ from typing import Any
 from app.core.exceptions import AcessoNaoAutorizado, TarefaNaoEncontrada
 from app.models import Tarefa
 from app.models.enums import PrioridadeTarefa
-from app.repositories import FiltroDeTarefas, TarefaRepositorio
+from app.repositories import FiltroDeTarefas, PaginaDeTarefas, TarefaRepositorio
 from app.models.enums import StatusTarefa
 NAO_INFORMADO: Any = object()
 @dataclass(frozen=True)
@@ -40,7 +40,7 @@ class TarefaServico:
             prazo=prazo,
         )
         return self._tarefas.salvar(tarefa)
-    def listar(self, filtro: FiltroDeTarefas) -> list[Tarefa]:
+    def listar(self, filtro: FiltroDeTarefas) -> PaginaDeTarefas:
         """Lista as tarefas conforme os critérios informados."""
         return self._tarefas.listar(filtro)
     
