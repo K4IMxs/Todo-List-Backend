@@ -1,14 +1,10 @@
 """Contrato JSON de tarefa."""
-
 from datetime import date
-
 from pydantic import Field
-
 from app.models.enums import PrioridadeTarefa, StatusTarefa
 from app.schemas.base import DataHoraUTC, EsquemaDeEntrada, EsquemaDeSaida
 
 # ----------------------------------------------------------------------------- Tarefa
-
 class TarefaCreate(EsquemaDeEntrada):
     """Dados para criar uma tarefa."""
 
@@ -36,3 +32,17 @@ class TarefaOut (EsquemaDeSaida):
     criado_em: DataHoraUTC
     atualizado_em: DataHoraUTC
     concluido_em: DataHoraUTC | None
+
+# ----------------------------------------------------------------------------- Resumo
+
+class ResumoOut(EsquemaDeSaida):
+    """Números do Painel, calculados no servidor.
+    
+    As análises da página Analytics têm o seu próprio contrato, em 
+    `schemas/analytics.py`
+    """
+
+    total: int
+    pendentes: int
+    concluidas: int
+    atrasadas: int

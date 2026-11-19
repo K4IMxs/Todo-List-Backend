@@ -63,15 +63,14 @@ class TarefaRepositorio(RepositorioBase[Tarefa]):
                 Tarefa.titulo.icontains(filtro.busca, autoescape=True)
             )
 
+        # O total é contado ANTES de aplicar o limite e deslocamento.
         total = consulta.order_by(None).count()
 
         coluna = self._coluna_de_ordenacao(filtro.ordenar_por)
         ordenacao = [coluna.desc() if filtro.ordem is Ordem.DESC else coluna.asc()]
         if filtro.ordenar_por is CampoOrdenacao.PRAZO:
             ordenacao.insert(0, case((Tarefa.prazo.is_(None), 1), else_=0))
-
         ordenacao.append(Tarefa.id.desc())
-
         tarefas = (
             consulta.order_by(*ordenacao)
             .offset(filtro.deslocamento)
@@ -79,3 +78,8 @@ class TarefaRepositorio(RepositorioBase[Tarefa]):
             .all()
         )
         return PaginaDeTarefas(tarefas=tarefas, total=total)
+    def todas_do_usuario(self, usuario_id: int) -> list[Tarefa]:
+        """Todas as tarefas de um usuário, sem filtro nem limite (para resumo)."""
+        return (
+            self._sessao.query(Tarefa).filter(Tarefa.usuario_id == usuario_id).all()
+        )
